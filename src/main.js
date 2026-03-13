@@ -1,5 +1,6 @@
 import * as THREE from "three";
 
+import {Graph} from "../model/Graph.js"
 import {Camera} from "../utils/Camera.js";
 
 main ();
@@ -7,6 +8,7 @@ main ();
 function main ()
 {
     const scene = new THREE.Scene ();
+    scene.background = new THREE.Color (0x888888);
 
     const canvas = document.querySelector ("#c");
     const renderer = new THREE.WebGLRenderer ({canvas: canvas});
@@ -14,6 +16,20 @@ function main ()
 ////////////////////////////////////////////////////////////////
 
     const camera = new Camera (canvas);
+
+    window.addEventListener ("keydown", (event) =>
+    {
+        if (event.key.toLowerCase () === "c")
+        {
+            camera.isPerspectiveMode = !camera.isPerspectiveMode;
+
+            camera.isPerspectiveMode === true ?
+            graph.get ().rotation.x = -Math.PI / 2 : graph.get ().rotation.x = 0;
+        }
+    })
+
+    const graph = new Graph (canvas);
+    scene.add (graph.get ());
 
     const geometry = new THREE.BoxGeometry (0.0965, 0.3915, 6.0015);
     const material = new THREE.MeshPhongMaterial ({color: 0xeeee00});
@@ -34,7 +50,7 @@ function main ()
     function animate ()
     {
         if (resizeRendererToDisplaySize (canvas, renderer)) {
-            camera.resize (canvas.clientWidth / canvas.clientHeight);
+            camera.resize (canvas);
         }
 
         requestAnimationFrame (animate);
