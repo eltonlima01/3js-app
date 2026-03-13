@@ -1,3 +1,3 @@
 export default {
-    base: '3js-app',
+    base: 'src/3js-app',
 }
