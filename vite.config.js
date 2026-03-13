@@ -1,3 +1,8 @@
 export default {
-    base: 'src/3js-app',
+    base: '3js-app',
+    root: 'src',
+    build: {
+        outDir: '../dist',
+        emptyOutDir: true
+    }
 }
