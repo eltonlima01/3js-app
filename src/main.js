@@ -4,38 +4,28 @@ import {Graph} from "../models/Graph.js"
 import {Stick} from "../models/Stick.js"
 import {Camera} from "../utils/Camera.js";
 
+// ################################################################ //
+
 main ();
 
 function main ()
 {
     const scene = new THREE.Scene ();
-    scene.background = new THREE.Color (0x888888);
+    scene.background = new THREE.Color (0xaaaaaa);
 
     const canvas = document.querySelector ("#c");
     const renderer = new THREE.WebGLRenderer ({canvas: canvas, antialias: true});
 
-////////////////////////////////////////////////////////////////
+    // ################################ //
 
     const camera = new Camera (canvas);
-
-    window.addEventListener ("keydown", (event) =>
-    {
-        if (event.key.toLowerCase () === "c")
-        {
-            camera.isPerspectiveMode = !camera.isPerspectiveMode;
-
-            camera.isPerspectiveMode === true ?
-            graph.get ().rotation.x = -Math.PI / 2 : graph.get ().rotation.x = 0;
-        }
-    })
 
     const graph = new Graph (canvas);
     scene.add (graph.get ());
 
-    const stick = new Stick (canvas, camera);
-    scene.add (stick.get ());
+    controls (scene, canvas, camera, graph);
 
-    ////////////////////////////////
+    // ################################ //
 
     const ambientLight = new THREE.AmbientLight (0x888888, 2.5);
 
@@ -45,7 +35,7 @@ function main ()
     scene.add (light);
     scene.add (ambientLight);
 
-    ////////////////////////////////
+    // ################################ //
 
     function animate ()
     {
@@ -61,7 +51,7 @@ function main ()
     animate ();
 }
 
-////////////////////////////////////////////////////////////////
+// ################################################################ //
 
 function resizeRendererToDisplaySize (canvas, renderer)
 {
@@ -72,4 +62,23 @@ function resizeRendererToDisplaySize (canvas, renderer)
     }
 
     return needResize;
+}
+
+function controls (scene, canvas, camera, graph)
+{
+    window.addEventListener ("keydown", (event) =>
+    {
+        if (event.key.toLowerCase () === "c")
+        {
+            camera.isPerspectiveMode = !camera.isPerspectiveMode;
+
+            camera.isPerspectiveMode === true ?
+            graph.get ().rotation.x = -Math.PI / 2 : graph.get ().rotation.x = 0;
+        }
+
+        if (event.key.toLowerCase () === "e") {
+            const newStick = new Stick (canvas, camera);
+            scene.add (newStick.get ());
+        }
+    });
 }

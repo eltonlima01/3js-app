@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const DEFAULT_FOV = 45;
+const DEFAULT_FOV = 90;
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
 const DEFAULT_RADIUS = 10;
@@ -18,15 +18,26 @@ export class Camera
     
         this.viewHeight = 20;
 
-        this.angleY = 0;
+        this.angleY = Math.PI / 6;
         this.angleXZ = Math.PI / 2;
 
         const aspect = canvas.clientWidth / canvas.clientHeight;
 
         ////////////////////////////////
 
-        this.camera3D = new THREE.PerspectiveCamera (DEFAULT_FOV, aspect, DEFAULT_NEAR, DEFAULT_FAR);
-        this.camera3D.position.z = DEFAULT_RADIUS;
+        this.camera3D = new THREE.PerspectiveCamera
+        (
+            DEFAULT_FOV,
+            aspect,
+            DEFAULT_NEAR,
+            DEFAULT_FAR
+        );
+
+        this.camera3D.position.x = DEFAULT_RADIUS * Math.cos (this.angleXZ) * Math.cos (this.angleY);
+        this.camera3D.position.y = DEFAULT_RADIUS * Math.sin (this.angleY);
+        this.camera3D.position.z = DEFAULT_RADIUS * Math.sin (this.angleXZ) * Math.cos (this.angleY);
+
+        this.camera3D.lookAt (0, 0, 0);
 
         this.camera2D = new THREE.OrthographicCamera
         (
@@ -38,7 +49,7 @@ export class Camera
             100
         );
 
-        this.camera2D.position.z = DEFAULT_RADIUS;
+        this.camera2D.position.z = DEFAULT_RADIUS / 2;
 
         this.controls ();
     }
