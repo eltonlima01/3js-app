@@ -23,7 +23,29 @@ function main ()
     const graph = new Graph (canvas);
     scene.add (graph.get ());
 
+    function toggleCamera ()
+    {
+        camera.isPerspectiveMode = !camera.isPerspectiveMode;
+
+        camera.isPerspectiveMode === true ?
+        graph.get ().rotation.x = -Math.PI / 2 : graph.get ().rotation.x = 0;
+    }
+
+    function addStick () {
+        const newStick = new Stick (canvas, camera);
+        scene.add (newStick.get ());
+    }
+
     controls (scene, canvas, camera, graph);
+
+    const btnStick = document.getElementById ("stick-btn");
+    const btnCamera = document.getElementById ("camera-btn");
+
+    btnStick.addEventListener ("pointerdown", (event) => event.stopPropagation ());
+    btnCamera.addEventListener ("pointerdown", (event) => event.stopPropagation ());
+    
+    btnStick.addEventListener ("click", addStick);
+    btnCamera.addEventListener ("click", toggleCamera);
 
     // ################################ //
 
