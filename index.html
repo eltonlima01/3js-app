@@ -1,0 +1,33 @@
+<!doctype html>
+
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+
+    <link rel="stylesheet" href="/src/styles.css" />
+
+    <title>CP3 simulator</title>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div id="menu">
+      <div id="menu-header"></div>
+
+      <div id="menu-body">
+        <button class="menu-btn" id="stick-btn">Adicionar novo palito</button>
+        <button class="menu-btn" id="camera-btn">Alternar câmera (2D/3D)</button>
+      </div>
+    </div>
+
+    <div id="context-menu">
+      <input type="range" id="angle-slider" min="-180" max="180" value="0" />
+      <span id="angle-display">0°</span>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
