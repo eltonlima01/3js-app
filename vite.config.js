@@ -1,7 +1,7 @@
 export default {
     base: '/3js-app',
     build: {
-        outDir: '../dist',
+        outDir: 'dist',
         emptyOutDir: true
     }
 }
