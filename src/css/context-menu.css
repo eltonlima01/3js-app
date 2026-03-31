@@ -1,0 +1,41 @@
+.context-menu {
+  position: absolute;
+  background-color: rgb(32, 32, 32);
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+}
+
+#context-menu.active {
+  display: flex;
+}
+
+.context-menu-header {
+  background-color: rgb(64, 64, 64);
+  min-height: 10px;
+  max-height: 10px;
+  display: flex;
+}
+
+.context-menu-element {
+    padding: 10px 15px;
+    border-bottom: 1px solid rgb(64, 64, 64);
+    display: flex;
+    flex-direction: column;
+}
+
+.context-menu-label {
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.context-menu-input {
+    width: 160px;
+    cursor: pointer;
+    margin: 0;
+}
