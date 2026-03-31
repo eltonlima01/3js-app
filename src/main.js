@@ -10,22 +10,19 @@ main();
 
 function main() {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xaaaaaa);
+  scene.background = new THREE.Color(0x111111);
 
-  const canvas = document.querySelector("#c");
+  const canvas = document.querySelector("#canvas");
   const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 
-  const camera = new Camera(canvas);
+  const camera = new Camera(canvas.clientWidth / canvas.clientHeight);
 
   const graph = new Graph(canvas);
   scene.add(graph.get());
 
   function toggleCamera() {
     camera.isPerspectiveMode = !camera.isPerspectiveMode;
-
-    camera.isPerspectiveMode === true
-      ? (graph.get().rotation.x = -Math.PI / 2.0)
-      : (graph.get().rotation.x = 0.0);
+    camera.isPerspectiveMode === true? graph.get().visible = false : graph.get().visible = true;
   }
 
   function addStick() {
@@ -46,8 +43,12 @@ function main() {
 
   let activeStick = null;
   const contextMenu = document.getElementById("context-menu");
+
   const angleSlider = document.getElementById("angle-slider");
   const angleDisplay = document.getElementById("angle-display");
+
+  const lengthSlider = document.getElementById("length-slider");
+  const lengthDisplay = document.getElementById("length-display");
 
   window.addEventListener("openContextMenu", (event) => {
     activeStick = event.detail.stick;
@@ -58,6 +59,9 @@ function main() {
 
     angleSlider.value = Math.round(activeStick.getAngle());
     angleDisplay.innerText = `${angleSlider.value}°`;
+
+    lengthSlider.value = activeStick.get().scale.x;
+    lengthDisplay.innerText = (activeStick.get().scale.x).toFixed(1);
   });
 
   angleSlider.addEventListener("input", (event) => {
@@ -66,6 +70,14 @@ function main() {
       angleDisplay.innerText = `${event.target.value}°`;
     }
   });
+
+  lengthSlider.addEventListener("input", (event) => {
+    if (activeStick !== null) {
+      const newLength = parseFloat(event.target.value);
+      activeStick.get().scale.x = newLength;
+      lengthDisplay.innerText = newLength;
+    }
+  })
 
   contextMenu.addEventListener("pointerdown", (event) =>
     event.stopPropagation(),
@@ -88,7 +100,7 @@ function main() {
 
   function animate() {
     if (resizeRendererToDisplaySize(canvas, renderer)) {
-      camera.resize(canvas);
+      camera.resize(canvas.clientWidth / canvas.clientHeight);
     }
 
     requestAnimationFrame(animate);

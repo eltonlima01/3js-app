@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="pt-br">
   <head>
     <meta charset="utf-8" />
@@ -7,27 +6,48 @@
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
-
-    <link rel="stylesheet" href="/src/styles.css" />
-
     <title>CP3 simulator</title>
+    <link rel="stylesheet" href="/src/css/main-menu.css" />
+    <link rel="stylesheet" href="/src/css/context-menu.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+
+      #canvas {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+      }
+    </style>
   </head>
   <body>
-    <canvas id="c"></canvas>
-    <div id="menu">
-      <div id="menu-header"></div>
-
-      <div id="menu-body">
-        <button class="menu-btn" id="stick-btn">Adicionar novo palito</button>
-        <button class="menu-btn" id="camera-btn">Alternar câmera (2D/3D)</button>
+    <canvas id="canvas"></canvas>
+    <div class="main-menu">
+      <div class="main-menu-header"></div>
+      <div class="main-menu-body">
+        <div class="main-menu-element">
+          <button class="main-menu-btn" id="stick-btn">Adicionar novo palito</button>
+        </div>
+        <div class="main-menu-element">
+          <button class="main-menu-btn" id="camera-btn">Alternar câmera (2D/3D)</button>
+        </div>
       </div>
     </div>
-
-    <div id="context-menu">
-      <input type="range" id="angle-slider" min="-180" max="180" value="0" />
-      <span id="angle-display">0°</span>
+    <div class="context-menu" id="context-menu">
+      <div class="context-menu-header"></div>
+      <div class="context-menu-element">
+        <label class="context-menu-label">Ângulo (em graus): <span id="angle-display">0°</span></label>
+        <input class="context-menu-input" type="range" id="angle-slider" min="-180" max="180" value="0" />
+      </div>
+      <div class="context-menu-element">
+        <label class="context-menu-label">Comprimento: <span id="length-display"></span>1.0</label>
+        <input class="context-menu-input" id="length-slider" type="range" min="0.1" max="1.0" step="0.1" value="1.0" />
+      </div>
     </div>
-
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
