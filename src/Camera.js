@@ -1,48 +1,41 @@
 import * as THREE from "three";
 
-const DEFAULT_FOV = 90;
+const DEFAULT_FOV = 45;
 const DEFAULT_NEAR = 0.1;
-const DEFAULT_FAR = 100;
-const DEFAULT_RADIUS = 10;
+const DEFAULT_FAR = 100.0;
+const DEFAULT_RADIUS = 10.0;
 
 export class Camera {
-  constructor(canvas) {
+  constructor(ASPECT) {
     this.isCameraMode = false;
     this.isPerspectiveMode = false;
 
     this.previousMousePosition = { x: 0, y: 0 };
 
-    this.viewHeight = 10;
-
     this.angleY = Math.PI / 6;
     this.angleXZ = Math.PI / 2;
 
-    const aspect = canvas.clientWidth / canvas.clientHeight;
-
     this.camera3D = new THREE.PerspectiveCamera(
       DEFAULT_FOV,
-      aspect,
+      ASPECT,
       DEFAULT_NEAR,
       DEFAULT_FAR,
     );
-
     this.camera3D.position.x =
       DEFAULT_RADIUS * Math.cos(this.angleXZ) * Math.cos(this.angleY);
     this.camera3D.position.y = DEFAULT_RADIUS * Math.sin(this.angleY);
     this.camera3D.position.z =
       DEFAULT_RADIUS * Math.sin(this.angleXZ) * Math.cos(this.angleY);
-
     this.camera3D.lookAt(0, 0, 0);
 
     this.camera2D = new THREE.OrthographicCamera(
-      (-this.viewHeight * aspect) / 2.0,
-      (this.viewHeight * aspect) / 2.0,
-      this.viewHeight / 2.0,
-      -this.viewHeight / 2.0,
+      -DEFAULT_RADIUS,
+      DEFAULT_RADIUS,
+      DEFAULT_RADIUS,
+      -DEFAULT_RADIUS,
       0.1,
       100,
     );
-
     this.camera2D.position.z = DEFAULT_RADIUS;
 
     this.controls();
@@ -57,7 +50,6 @@ export class Camera {
     window.addEventListener("mousedown", (event) => {
       if (event.button === 2) {
         this.isCameraMode = true;
-
         this.previousMousePosition = { x: event.clientX, y: event.clientY };
       }
     });
@@ -117,16 +109,14 @@ export class Camera {
     });
   }
 
-  resize(canvas) {
-    const aspect = canvas.clientWidth / canvas.clientHeight;
-
+  resize(aspect) {
     this.camera3D.aspect = aspect;
     this.camera3D.updateProjectionMatrix();
 
-    this.camera2D.left = (-this.viewHeight * aspect) / 2.0;
-    this.camera2D.right = (this.viewHeight * aspect) / 2.0;
-    this.camera2D.top = this.viewHeight / 2.0;
-    this.camera2D.bottom = -this.viewHeight / 2.0;
+    this.camera2D.left = -DEFAULT_RADIUS * aspect;
+    this.camera2D.right = DEFAULT_RADIUS * aspect;
+    this.camera2D.top = DEFAULT_RADIUS;
+    this.camera2D.bottom = -DEFAULT_RADIUS;
 
     this.camera2D.updateProjectionMatrix();
   }
