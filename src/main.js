@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { Graph } from "./Graph.js";
 import { Stick } from "./Stick.js";
 import { Camera } from "./Camera.js";
+import { Interface } from "./Interface.js";
 
 window.addEventListener("contextmenu", (event) => event.preventDefault());
 
@@ -32,62 +33,9 @@ function main() {
 
   controls(scene, canvas, camera, graph);
 
-  const btnStick = document.getElementById("stick-btn");
-  const btnCamera = document.getElementById("camera-btn");
-
-  btnStick.addEventListener("pointerdown", (event) => event.stopPropagation());
-  btnCamera.addEventListener("pointerdown", (event) => event.stopPropagation());
-
-  btnStick.addEventListener("click", addStick);
-  btnCamera.addEventListener("click", toggleCamera);
-
-  let activeStick = null;
-  const contextMenu = document.getElementById("context-menu");
-
-  const angleSlider = document.getElementById("angle-slider");
-  const angleDisplay = document.getElementById("angle-display");
-
-  const lengthSlider = document.getElementById("length-slider");
-  const lengthDisplay = document.getElementById("length-display");
-
-  window.addEventListener("openContextMenu", (event) => {
-    activeStick = event.detail.stick;
-
-    contextMenu.style.left = `${event.detail.x}px`;
-    contextMenu.style.top = `${event.detail.y}px`;
-    contextMenu.classList.add("active");
-
-    angleSlider.value = Math.round(activeStick.getAngle());
-    angleDisplay.innerText = `${angleSlider.value}°`;
-
-    lengthSlider.value = activeStick.get().scale.x;
-    lengthDisplay.innerText = (activeStick.get().scale.x).toFixed(1);
-  });
-
-  angleSlider.addEventListener("input", (event) => {
-    if (activeStick !== null) {
-      activeStick.setAngle(event.target.value);
-      angleDisplay.innerText = `${event.target.value}°`;
-    }
-  });
-
-  lengthSlider.addEventListener("input", (event) => {
-    if (activeStick !== null) {
-      const newLength = parseFloat(event.target.value);
-      activeStick.get().scale.x = newLength;
-      lengthDisplay.innerText = newLength;
-    }
-  })
-
-  contextMenu.addEventListener("pointerdown", (event) =>
-    event.stopPropagation(),
-  );
-
-  window.addEventListener("pointerdown", (event) => {
-    if (event.button === 0) {
-      contextMenu.classList.remove("active");
-      activeStick = null;
-    }
+  const ui = new Interface ({
+    addStick: addStick,
+    toggleCamera: toggleCamera
   });
 
   const ambientLight = new THREE.AmbientLight(0x888888, 2.5);
@@ -99,7 +47,8 @@ function main() {
   scene.add(ambientLight);
 
   function animate() {
-    if (resizeRendererToDisplaySize(canvas, renderer)) {
+    if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+      renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
       camera.resize(canvas.clientWidth / canvas.clientHeight);
     }
 
@@ -109,18 +58,6 @@ function main() {
   }
 
   animate();
-}
-
-function resizeRendererToDisplaySize(canvas, renderer) {
-  const needResize =
-    canvas.width !== canvas.clientWidth ||
-    canvas.height !== canvas.clientHeight;
-
-  if (needResize) {
-    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-  }
-
-  return needResize;
 }
 
 function controls(scene, canvas, camera, graph) {
