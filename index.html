@@ -6,7 +6,9 @@
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
+
     <title>CP3 simulator</title>
+
     <link rel="stylesheet" href="/src/css/main-menu.css" />
     <link rel="stylesheet" href="/src/css/context-menu.css" />
     <style>
@@ -26,28 +28,40 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
+
     <div class="main-menu">
       <div class="main-menu-header"></div>
+
       <div class="main-menu-body">
         <div class="main-menu-element">
           <button class="main-menu-btn" id="stick-btn">Adicionar novo palito</button>
         </div>
+
         <div class="main-menu-element">
           <button class="main-menu-btn" id="camera-btn">Alternar câmera (2D/3D)</button>
         </div>
+
+        <div class="main-menu-element">
+          <label class="main-menu-label">Distância entre camadas: </label>
+          <input class="main-menu-number" id="gap-input" type="number" />
+        </div>
       </div>
     </div>
+
     <div class="context-menu" id="context-menu">
       <div class="context-menu-header"></div>
+
       <div class="context-menu-element">
-        <label class="context-menu-label">Ângulo (em graus): <span id="angle-display">0°</span></label>
-        <input class="context-menu-input" type="range" id="angle-slider" min="-180" max="180" value="0" />
+        <label class="context-menu-label">Ângulo: <span id="angle-display">0°</span></label>
+        <input class="context-menu-input" id="angle-slider" type="range" min="-180" max="180" step="0.01" value="0" />
       </div>
+
       <div class="context-menu-element">
-        <label class="context-menu-label">Comprimento: <span id="length-display"></span>1.0</label>
-        <input class="context-menu-input" id="length-slider" type="range" min="0.1" max="1.0" step="0.1" value="1.0" />
+        <label class="context-menu-label">Comprimento: <span id="length-display">cm</span></label>
+        <input class="context-menu-input" id="length-slider" type="range" min="0.1" max="1.0" step="0.01" value="1.0" />
       </div>
     </div>
+    
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

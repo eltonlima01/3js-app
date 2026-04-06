@@ -3,7 +3,7 @@ import * as THREE from "three";
 const DEFAULT_FOV = 45;
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100.0;
-const DEFAULT_RADIUS = 10.0;
+const DEFAULT_RADIUS = 15.0;
 
 export class Camera {
   constructor(ASPECT) {

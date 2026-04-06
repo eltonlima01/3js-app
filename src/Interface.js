@@ -1,6 +1,7 @@
 export class Interface {
     constructor(callbacks) {
         this.addStick = callbacks.addStick;
+        this.updateGap = callbacks.updateGap;
         this.toggleCamera = callbacks.toggleCamera;
 
         this.activeStick = null;
@@ -15,6 +16,8 @@ export class Interface {
 
         this.lengthSlider = document.getElementById("length-slider");
         this.lengthDisplay = document.getElementById("length-display");
+
+        this.gapInput = document.getElementById("gap-input");
 
         this.btnStick.addEventListener("pointerdown", (event) => event.stopPropagation());
         this.btnCamera.addEventListener("pointerdown", (event) => event.stopPropagation());
@@ -33,6 +36,14 @@ export class Interface {
 
         this.btnStick.addEventListener("click", this.addStick);
         this.btnCamera.addEventListener("click", this.toggleCamera);
+
+        this.gapInput.addEventListener("input", (event) => {
+            const UPDATED_GAP = parseFloat(event.target.value);
+
+            if (!isNaN(UPDATED_GAP)) {
+                this.updateGap(UPDATED_GAP);
+            }
+        })
     }
 
     contextInterface() {
@@ -49,9 +60,10 @@ export class Interface {
 
         this.lengthSlider.addEventListener("input", (event) => {
             if (this.activeStick !== null) {
-                const newLength = parseFloat(event.target.value);
-                this.activeStick.get().scale.x = newLength;
-                this.lengthDisplay.innerText = newLength.toFixed(1);
+                const newScale = parseFloat(event.target.value);
+
+                this.activeStick.get().scale.x = newScale;
+                this.lengthDisplay.innerText = (6.0015 * 2 * newScale).toFixed(1) + " cm";
             }
         });
     }
@@ -68,7 +80,7 @@ export class Interface {
             this.angleDisplay.innerText = `${this.angleSlider.value}°`;
     
             this.lengthSlider.value = this.activeStick.get().scale.x;
-            this.lengthDisplay.innerText = (this.activeStick.get().scale.x).toFixed(1);
+            this.lengthDisplay.innerText = (6.0015 * 2 * this.activeStick.get().scale.x).toFixed(1) + " cm";
         });
     
         window.addEventListener("pointerdown", (event) => {
