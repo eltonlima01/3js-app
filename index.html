@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-br">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" href="/src/css/main-menu.css" />
     <link rel="stylesheet" href="/src/css/context-menu.css" />
+
     <style>
       html,
       body {
@@ -26,42 +27,82 @@
       }
     </style>
   </head>
+
   <body>
+    <!-- canvas -->
     <canvas id="canvas"></canvas>
 
+    <!-- main-menu -->
+
     <div class="main-menu">
-      <div class="main-menu-header"></div>
+      <div class="main-menu-header">
+        <img src="/src/images/arrow-up-svgrepo-com.svg" />
+      </div>
 
       <div class="main-menu-body">
-        <div class="main-menu-element">
-          <button class="main-menu-btn" id="stick-btn">Adicionar novo palito</button>
+        <div class="main-menu-body-element">
+          <button class="main-menu-body-element-btn" id="stick-btn">
+            Adicionar novo palito
+          </button>
         </div>
 
-        <div class="main-menu-element">
-          <button class="main-menu-btn" id="camera-btn">Alternar câmera (2D/3D)</button>
+        <div class="main-menu-body-element">
+          <button class="main-menu-body-element-btn" id="camera-btn">
+            Alternar câmera (2D/3D)
+          </button>
         </div>
 
-        <div class="main-menu-element">
-          <label class="main-menu-label">Distância entre camadas: </label>
-          <input class="main-menu-number" id="gap-input" type="number" />
+        <div class="main-menu-body-element">
+          <label class="main-menu-body-element-label"
+            >Distância entre camadas:
+          </label>
+          <input
+            class="main-menu-body-element-number"
+            id="gap-input"
+            type="number"
+          />
         </div>
       </div>
     </div>
+
+    <!-- context-menu -->
 
     <div class="context-menu" id="context-menu">
       <div class="context-menu-header"></div>
 
-      <div class="context-menu-element">
-        <label class="context-menu-label">Ângulo: <span id="angle-display">0°</span></label>
-        <input class="context-menu-input" id="angle-slider" type="range" min="-180" max="180" step="0.01" value="0" />
-      </div>
+      <div class="context-menu-body">
+        <div class="context-menu-body-element">
+          <label class="context-menu-body-element-label"
+            >Ângulo: <span id="angle-display">0°</span></label
+          >
+          <input
+            class="context-menu-body-element-input"
+            id="angle-slider"
+            type="range"
+            min="-180"
+            max="180"
+            step="0.01"
+            value="0"
+          />
+        </div>
 
-      <div class="context-menu-element">
-        <label class="context-menu-label">Comprimento: <span id="length-display">cm</span></label>
-        <input class="context-menu-input" id="length-slider" type="range" min="0.1" max="1.0" step="0.01" value="1.0" />
+        <div class="context-menu-body-element">
+          <label class="context-menu-body-element-label"
+            >Comprimento: <span id="length-display">cm</span></label
+          >
+          <input
+            class="context-menu-body-element-input"
+            id="length-slider"
+            type="range"
+            min="0.1"
+            max="1.0"
+            step="0.01"
+            value="1.0"
+          />
+        </div>
       </div>
     </div>
-    
-    <script type="module" src="/src/main.js"></script>
+
+    <script type="module" src="/src/js/main.js"></script>
   </body>
 </html>
