@@ -42,15 +42,9 @@ export class Graph {
     }
 
     const gridGeometry = new THREE.BufferGeometry().setFromPoints(gridPoints);
-    const xAxisGeometry = new THREE.BufferGeometry().setFromPoints(
-      xAxisPoints,
-    );
-    const yAxisGeometry = new THREE.BufferGeometry().setFromPoints(
-      yAxisPoints,
-    );
-    const zAxisGeometry = new THREE.BufferGeometry().setFromPoints(
-      zAxisPoints,
-    );
+    const xAxisGeometry = new THREE.BufferGeometry().setFromPoints(xAxisPoints);
+    const yAxisGeometry = new THREE.BufferGeometry().setFromPoints(yAxisPoints);
+    const zAxisGeometry = new THREE.BufferGeometry().setFromPoints(zAxisPoints);
 
     this.gridLines = new THREE.LineSegments(gridGeometry, gridMaterial);
 
@@ -68,7 +62,7 @@ export class Graph {
     ctx.fillStyle = "#333333";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText ("0", 64, 64);
+    ctx.fillText("0", 64, 64);
 
     const textTexture = new THREE.CanvasTexture(textCanvas);
     textTexture.minFilter = THREE.LinearFilter;
@@ -76,7 +70,7 @@ export class Graph {
     const spriteMaterial = new THREE.SpriteMaterial({
       map: textTexture,
       transparent: true,
-      depthTest: false
+      depthTest: false,
     });
 
     this.zeroSprite = new THREE.Sprite(spriteMaterial);

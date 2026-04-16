@@ -10,7 +10,7 @@
 
   display: none;
   flex-direction: column;
-  
+
   overflow: hidden;
   user-select: none;
 
@@ -66,29 +66,30 @@
 }
 
 .context-menu-body-element-label {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 
-    color: #bbb;
-    font-size: 0.95rem;
-    font-family: Arial, Helvetica, sans-serif;
+  color: #bbb;
+  font-size: 0.95rem;
+  font-family: Arial, Helvetica, sans-serif;
 
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .context-menu-body-element-input {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 
-    width: 100%;
+  width: 100%;
 
-    cursor: pointer;
+  cursor: pointer;
 }
 
 /* ** */
 
-.context-menu-body:last-child, .context-menu-body-element:last-child {
+.context-menu-body:last-child,
+.context-menu-body-element:last-child {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }

@@ -16,7 +16,11 @@ export class Stick {
       STICK_HALF_HEIGHT,
       STICK_HALF_DEPTH,
     );
-    this.material = new THREE.MeshStandardMaterial({ color: STICK_COLOR, roughness: 0.75, metalness: 0.0 });
+    this.material = new THREE.MeshStandardMaterial({
+      color: STICK_COLOR,
+      roughness: 0.75,
+      metalness: 0.0,
+    });
 
     this.meshFront = new THREE.Mesh(geometry, this.material);
     this.meshFront.rotation.y = Math.PI / 2;
@@ -53,5 +57,17 @@ export class Stick {
 
   deselect() {
     this.material.color.setHex(0xeeee00);
+  }
+
+  getEndPoints() {
+    const halfDepth = STICK_HALF_DEPTH / 2.0;
+
+    const left = new THREE.Vector3(-halfDepth, 0, 0);
+    const right = new THREE.Vector3(halfDepth, 0, 0);
+
+    this.group.localToWorld(left);
+    this.group.localToWorld(right);
+
+    return [ left, right ];
   }
 }

@@ -3,7 +3,7 @@ import * as THREE from "three";
 const DEFAULT_FOV = 45;
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100.0;
-const DEFAULT_RADIUS = 15.0;
+const DEFAULT_RADIUS = 30.0;
 
 export class Camera {
   constructor(ASPECT) {
@@ -29,10 +29,10 @@ export class Camera {
     this.camera3D.lookAt(0, 0, 0);
 
     this.camera2D = new THREE.OrthographicCamera(
-      -DEFAULT_RADIUS,
-      DEFAULT_RADIUS,
-      DEFAULT_RADIUS,
-      -DEFAULT_RADIUS,
+      -DEFAULT_RADIUS / 4,
+      DEFAULT_RADIUS / 4,
+      DEFAULT_RADIUS / 4,
+      -DEFAULT_RADIUS / 4,
       0.1,
       100,
     );
