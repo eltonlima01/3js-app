@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html />
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
@@ -43,21 +43,24 @@
 
       <div class="main-menu-body">
         <div class="main-menu-body-element">
+          <button class="main-menu-body-element-btn" id="camera-btn">
+            <img src="/assets/camera-outlined-svgrepo-com.svg" />
+            Alternar visualização (2D/3D)
+          </button>
+        </div>
+
+        <div class="main-menu-body-element">
           <button class="main-menu-body-element-btn" id="stick-btn">
+            <img src="/assets/zoom-out-svgrepo-com.svg" />
             Adicionar novo palito
           </button>
         </div>
 
         <div class="main-menu-body-element">
-          <button class="main-menu-body-element-btn" id="camera-btn">
-            Alternar câmera (2D/3D)
-          </button>
-        </div>
-
-        <div class="main-menu-body-element">
-          <label class="main-menu-body-element-label"
-            >Distância entre camadas:
+          <label class="main-menu-body-element-label">
+            Distância entre camadas (cm):
           </label>
+          <img src="/assets/format-line-spacing-svgrepo-com.svg" />
           <input
             class="main-menu-body-element-number"
             id="gap-input"
@@ -70,15 +73,21 @@
     <!-- context-menu -->
 
     <div class="context-menu" id="context-menu">
+
+      <!-- header -->
+
       <div class="context-menu-header"></div>
+
+      <!-- body -->
 
       <div class="context-menu-body">
         <div class="context-menu-body-element">
-          <label class="context-menu-body-element-label"
+          <label class="context-menu-body-element-label icon-angle"
             >Ângulo: <span id="angle-display">0°</span></label
           >
+
           <input
-            class="context-menu-body-element-input"
+            class="context-menu-body-element-slider"
             id="angle-slider"
             type="range"
             min="-180"
@@ -86,14 +95,21 @@
             step="0.01"
             value="0"
           />
+          <input
+            class="context-menu-body-element-number"
+            id="angle-number"
+            type="number"
+            value="0"
+          />
         </div>
 
         <div class="context-menu-body-element">
-          <label class="context-menu-body-element-label"
+          <label class="context-menu-body-element-label icon-length"
             >Comprimento: <span id="length-display">cm</span></label
           >
+
           <input
-            class="context-menu-body-element-input"
+            class="context-menu-body-element-slider"
             id="length-slider"
             type="range"
             min="0.1"
@@ -101,6 +117,19 @@
             step="0.01"
             value="1.0"
           />
+          <input
+            class="context-menu-body-element-number"
+            id="length-number"
+            type="number"
+            value="0"
+          />
+        </div>
+        <div class="context-menu-body-element">
+          <label class="context-menu-body-element-label icon-coord">Posição X: </label>
+          <input class="context-menu-body-element-number" id="pos-x" type="number" />
+
+          <label class="context-menu-body-element-label icon-coord">Posição Y: </label>
+          <input class="context-menu-body-element-number" id="pos-y" type="number" />
         </div>
       </div>
     </div>

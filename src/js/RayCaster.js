@@ -64,9 +64,10 @@ export class RayCaster {
 
       if (event.button === 0) {
         Stick.selectedStick = hitStick;
+        Stick.isSelected = true;
 
         for(const stick of Stick.selectedStick.cluster) {
-          Stick.selectedStick.select();
+          stick.select();
         }
 
 
@@ -82,7 +83,7 @@ export class RayCaster {
   }
 
   onPointerMove(event) {
-    if (Stick.selectedStick === null || this.camera.isPerspectiveMode === true) {
+    if (Stick.selectedStick === null || this.camera.isPerspectiveMode === true || Stick.isSelected === false) {
       return;
     }
 
@@ -146,11 +147,12 @@ export class RayCaster {
   }
 
   onPointerUp(event) {
-    if (event.button === 0 && Stick.selectedStick !== null) {
+    if (event.button === 0 && Stick.selectedStick !== null && Stick.isSelected === true) {
       for (const stick of Stick.selectedStick.cluster) {
         stick.deselect();
       }
       Stick.selectedStick = null;
+      Stick.isSelected = false;
     }
   }
 }

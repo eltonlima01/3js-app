@@ -8,6 +8,7 @@ const STICK_HALF_DEPTH = 6.0015;
 
 export class Stick {
   static selectedStick = null;
+  static isSelected = false;
 
   constructor(gap = 1.0) {
     this.group = new THREE.Group();
@@ -57,10 +58,16 @@ export class Stick {
 
   select() {
     this.material.color.setHex(0xffaa00);
+    this.material.transparent = true;
+    this.material.opacity = 0.6;
+    this.material.needsUpdate = true;
   }
 
   deselect() {
     this.material.color.setHex(0xeeee00);
+    this.material.opacity = 1.0;
+    this.material.transparent = false;
+    this.material.needsUpdate = true;
   }
 
   getEndPoints() {
