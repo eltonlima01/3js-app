@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Stick } from "./Stick"
 
 export class RayCaster {
   constructor(canvas, camera, sticks) {
@@ -6,11 +7,9 @@ export class RayCaster {
     this.camera = camera;
     this.sticks = sticks;
 
-    this.selectedStick = null;
-
     this.raycaster = new THREE.Raycaster();
-    this.mouse = new THREE.Vector2();
     this.dragPlane = new THREE.Plane();
+    this.mouse = new THREE.Vector2();
     this.offset = new THREE.Vector3();
     this.planeNormal = new THREE.Vector3(0, 0, 0);
 
@@ -35,9 +34,7 @@ export class RayCaster {
   }
 
   onPointerDown(event) {
-    if (this.camera.isPerspectiveMode === true) {
-      return;
-    }
+    if (this.camera.isPerspectiveMode === true) { return }
 
     this.updateMousePos(event);
 
@@ -66,22 +63,26 @@ export class RayCaster {
       }
 
       if (event.button === 0) {
-        this.selectedStick = hitStick;
-        this.selectedStick.select();
+        Stick.selectedStick = hitStick;
+
+        for(const stick of Stick.selectedStick.cluster) {
+          Stick.selectedStick.select();
+        }
+
 
         this.dragPlane.setFromNormalAndCoplanarPoint(
           this.camera.get().getWorldDirection(this.planeNormal),
-          this.selectedStick.get().position,
+          Stick.selectedStick.get().position,
         );
 
         this.raycaster.ray.intersectPlane(this.dragPlane, this.offset);
-        this.offset.sub(this.selectedStick.get().position);
+        this.offset.sub(Stick.selectedStick.get().position);
       }
     }
   }
 
   onPointerMove(event) {
-    if (this.selectedStick === null || this.camera.isPerspectiveMode === true) {
+    if (Stick.selectedStick === null || this.camera.isPerspectiveMode === true) {
       return;
     }
 
@@ -95,16 +96,21 @@ export class RayCaster {
 
     intersectPoint.sub(this.offset);
 
-    this.selectedStick.get().position.copy(intersectPoint);
-    this.selectedStick.get().updateMatrixWorld(true);
+    const delta = new THREE.Vector3().subVectors(intersectPoint, Stick.selectedStick.get().position);
 
-    const SNAP_THRESHOLD = 0.15;
+    for (const stick of Stick.selectedStick.cluster) {
+      stick.get().position.add(delta);
+
+      stick.get().updateMatrixWorld(true);
+    }
+
+    const SNAP_THRESHOLD = 1.0;
     let snapped = false;
 
-    const movingEnds = this.selectedStick.getEndPoints();
+    const movingEnds = Stick.selectedStick.getEndPoints();
 
     for (const stick of this.sticks) {
-      if(stick === this.selectedStick) { continue }
+      if(stick.cluster == Stick.selectedStick.cluster) { continue }
 
       const targetEnds = stick.getEndPoints();
 
@@ -115,10 +121,19 @@ export class RayCaster {
           if(distance < SNAP_THRESHOLD) {
             const snapOffset = new THREE.Vector3().subVectors(tEnds, mEnds);
 
-            this.selectedStick.get().position.add(snapOffset);
+            for (const clusterStick of Stick.selectedStick.cluster) {
+              clusterStick.get().position.add(snapOffset);
+              clusterStick.get().updateMatrixWorld(true);
+            }
+
+            this.offset.sub(snapOffset);
+
+            for(const s of Stick.selectedStick.cluster) {
+              stick.cluster.add(s);
+              s.cluster = stick.cluster;
+            }
 
             snapped = true;
-
             break;
           }
         }
@@ -131,9 +146,11 @@ export class RayCaster {
   }
 
   onPointerUp(event) {
-    if (event.button === 0 && this.selectedStick !== null) {
-      this.selectedStick.deselect();
-      this.selectedStick = null;
+    if (event.button === 0 && Stick.selectedStick !== null) {
+      for (const stick of Stick.selectedStick.cluster) {
+        stick.deselect();
+      }
+      Stick.selectedStick = null;
     }
   }
 }

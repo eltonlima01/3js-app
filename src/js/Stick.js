@@ -7,9 +7,13 @@ const STICK_HALF_HEIGHT = 0.3915;
 const STICK_HALF_DEPTH = 6.0015;
 
 export class Stick {
+  static selectedStick = null;
+
   constructor(gap = 1.0) {
     this.group = new THREE.Group();
     this.group.userData.instance = this;
+
+    this.cluster = new Set([this]);
 
     const geometry = new THREE.BoxGeometry(
       STICK_HALF_WIDTH,
