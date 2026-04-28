@@ -2,7 +2,9 @@ import { Stick } from "./Stick";
 
 export class Interface {
   constructor(callbacks) {
-    this.addStick = callbacks.addStick;
+    this.newStick = callbacks.newStick;
+    this.deleteStick = callbacks.deleteStick;
+    this.separateStick = callbacks.separateStick;
     this.updateGap = callbacks.updateGap;
     this.toggleCamera = callbacks.toggleCamera;
     this.changeGap = callbacks.changeGap;
@@ -33,7 +35,7 @@ export class Interface {
       event.stopPropagation(),
     );
 
-    this.btnStick.addEventListener("click", this.addStick);
+    this.btnStick.addEventListener("click", this.newStick);
     this.btnCamera.addEventListener("click", this.toggleCamera);
 
     this.gapInput = document.getElementById("gap-input");
@@ -51,6 +53,9 @@ export class Interface {
       }
     });
 
+    this.btnSeparate = document.getElementById("btn-separate");
+    this.btnDelete = document.getElementById("btn-delete");
+
     this.events();
     this.mainInterface();
     this.contextInterface();
@@ -67,7 +72,7 @@ export class Interface {
       event.stopPropagation(),
     );
 
-    this.btnStick.addEventListener("click", this.addStick);
+    this.btnStick.addEventListener("click", this.newStick);
     this.btnCamera.addEventListener("click", this.toggleCamera);
 
     this.gapInput.addEventListener("input", (event) => {
@@ -88,6 +93,30 @@ export class Interface {
     this.contextMenu.addEventListener("pointerdown", (event) =>
       event.stopPropagation(),
     );
+
+    this.btnSeparate.addEventListener("click", () => {
+      if (Stick.selectedStick !== null) {
+        const stickToSeparate = Stick.selectedStick;
+
+        this.separateStick(stickToSeparate, event);
+
+        this.contextMenu.classList.remove("active");
+        Stick.selectedStick = null;
+      }
+    });
+
+    this.btnDelete.addEventListener("click", () => {
+      const stickToDelete = Stick.selectedStick;
+
+      if (stickToDelete.cluster) {
+        stickToDelete.cluster.delete(stickToDelete);
+      }
+
+      this.deleteStick(stickToDelete);
+
+      this.contextMenu.classList.remove("active");
+      Stick.selectedStick = null;
+    });
 
     /* Angle Slider */
 
