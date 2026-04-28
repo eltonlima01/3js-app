@@ -41,9 +41,11 @@ function main() {
   }
 
   const ui = new Interface({
-    addStick: addStick,
-    toggleCamera: toggleCamera,
-    changeGap: changeGap
+    newStick: newStick,
+    deleteStick: deleteStick,
+    separateStick: separateStick,
+    changeGap: changeGap,
+    toggleCamera: toggleCamera
   });
 
   const raycaster = new RayCaster(canvas, camera, sticks);
@@ -76,9 +78,29 @@ function main() {
     }
   }
 
-  function addStick() {
+  function newStick(event) {
     const newStick = new Stick(currentGap);
     scene.add(newStick.get());
-    sticks.push(newStick);
+
+    raycaster.startPlacing(newStick, event);
+  }
+
+  function deleteStick(stick) {
+    scene.remove(stick.get());
+
+    const index = sticks.indexOf(stick);
+
+    if (index > -1) {
+      sticks.splice(index, 1);
+    }
+  }
+
+  function separateStick(stick, event) {
+    if (stick.cluster) {
+      stick.cluster.delete(stick);
+    }
+
+    stick.cluster = new Set([stick]);
+    raycaster.startPlacing(stick, event);
   }
 }

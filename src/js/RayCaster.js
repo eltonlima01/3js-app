@@ -13,7 +13,26 @@ export class RayCaster {
     this.offset = new THREE.Vector3();
     this.planeNormal = new THREE.Vector3(0, 0, 0);
 
+    this.basePlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    this.placingStick = null;
+
     this.events();
+  }
+
+  startPlacing(stick, event) {
+    this.placingStick = stick;
+
+    if (!this.sticks.includes(stick)) {
+      this.sticks.push(stick);
+    }
+
+    this.placingStick.select();
+
+    if (event && event.clientX) {
+      this.updateMousePos(event);
+      this.raycaster.setFromCamera(this.mouse, this.camera.get());
+      this.raycaster.ray.intersectPlane(this.basePlane, this.placingStick.get().position);
+    }
   }
 
   updateMousePos(event) {
@@ -35,6 +54,26 @@ export class RayCaster {
 
   onPointerDown(event) {
     if (this.camera.isPerspectiveMode === true) { return }
+
+    if (this.placingStick !== null) {
+      if (event.button === 0) {
+        this.placingStick.deselect();
+        this.placingStick = null;
+      }
+      else if (event.button === 2) {
+        this.placingStick.get().removeFromParent();
+
+        const index = this.sticks.indexOf(this.placingStick);
+
+        if (index > -1) {
+          this.sticks.splice(index, 1);
+        }
+
+        this.placingStick = null;
+      }
+
+      return;
+    }
 
     this.updateMousePos(event);
 
@@ -83,7 +122,20 @@ export class RayCaster {
   }
 
   onPointerMove(event) {
-    if (Stick.selectedStick === null || this.camera.isPerspectiveMode === true || Stick.isSelected === false) {
+    if (this.camera.isPerspectiveMode) {
+      return;
+    }
+
+    if (this.placingStick !== null) {
+      this.updateMousePos(event);
+
+      this.raycaster.setFromCamera(this.mouse, this.camera.get());
+      this.raycaster.ray.intersectPlane(this.basePlane, this.placingStick.get().position);
+
+      return;
+    }
+    
+    if (Stick.selectedStick === null || Stick.isSelected === false) {
       return;
     }
 
@@ -92,6 +144,11 @@ export class RayCaster {
     this.raycaster.setFromCamera(this.mouse, this.camera.get());
 
     const intersectPoint = new THREE.Vector3();
+    const hit = this.raycaster.ray.intersectPlane(this.dragPlane, intersectPoint);
+
+    if (!hit) {
+      return;
+    }
 
     this.raycaster.ray.intersectPlane(this.dragPlane, intersectPoint);
 
@@ -135,6 +192,13 @@ export class RayCaster {
             }
 
             snapped = true;
+
+            for (const clusterStick of Stick.selectedStick.cluster) {
+              clusterStick.deselect();
+            }
+
+            Stick.selectedStick = null;
+            Stick.isSelected = false;
             break;
           }
         }
