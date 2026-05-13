@@ -11,6 +11,8 @@ export class Stick {
   static isSelected = false;
 
   constructor(gap = 1.0) {
+    this.STICK_MASS = 1.5;
+
     this.group = new THREE.Group();
     this.group.userData.instance = this;
 
@@ -21,17 +23,31 @@ export class Stick {
       STICK_HALF_HEIGHT,
       STICK_HALF_DEPTH,
     );
+
     this.material = new THREE.MeshStandardMaterial({
       color: STICK_COLOR,
       roughness: 0.75,
       metalness: 0.0,
     });
 
+    const edgesGeometry = new THREE.EdgesGeometry(geometry);
+    const edgesMaterial = new THREE.LineBasicMaterial({color: 0x000000});
+
     this.meshFront = new THREE.Mesh(geometry, this.material);
+
+    const linesFront = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+
+    this.meshFront.add(linesFront);
+
     this.meshFront.rotation.y = Math.PI / 2;
     this.meshFront.position.z = -gap;
 
     this.meshBack = new THREE.Mesh(geometry, this.material);
+
+    const linesBack = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+
+    this.meshBack.add(linesBack);
+
     this.meshBack.rotation.y = Math.PI / 2;
     this.meshBack.position.z = gap;
 

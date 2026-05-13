@@ -55,7 +55,7 @@ export class RayCaster {
   onPointerDown(event) {
     if (this.camera.isPerspectiveMode === true) { return }
 
-    if (this.placingStick !== null) {
+    if (this.placingStick) {
       if (event.button === 0) {
         this.placingStick.deselect();
         this.placingStick = null;
@@ -83,7 +83,9 @@ export class RayCaster {
     const intersects = this.raycaster.intersectObjects(stickGroups, true);
 
     if (intersects.length > 0.0) {
-      const hitStick = intersects[0].object.parent.userData.instance;
+      const hitStick = intersects[0].object.parent?.userData?.instance;
+
+      if (!hitStick) { return }
 
       if (event.button === 2) {
         event.stopPropagation();
@@ -104,6 +106,10 @@ export class RayCaster {
       if (event.button === 0) {
         Stick.selectedStick = hitStick;
         Stick.isSelected = true;
+
+        if (!Stick.selectedStick.cluster) {
+          Stick.selectedStick.cluster = new Set([Stick.selectedStick]);
+        }
 
         for(const stick of Stick.selectedStick.cluster) {
           stick.select();
@@ -126,7 +132,7 @@ export class RayCaster {
       return;
     }
 
-    if (this.placingStick !== null) {
+    if (this.placingStick) {
       this.updateMousePos(event);
 
       this.raycaster.setFromCamera(this.mouse, this.camera.get());
@@ -135,9 +141,7 @@ export class RayCaster {
       return;
     }
     
-    if (Stick.selectedStick === null || Stick.isSelected === false) {
-      return;
-    }
+    if (!Stick.selectedStick || !Stick.isSelected) { return }
 
     this.updateMousePos(event);
 
@@ -211,10 +215,13 @@ export class RayCaster {
   }
 
   onPointerUp(event) {
-    if (event.button === 0 && Stick.selectedStick !== null && Stick.isSelected === true) {
-      for (const stick of Stick.selectedStick.cluster) {
-        stick.deselect();
+    if (event.button === 0 && Stick.selectedStick && Stick.isSelected) {
+      if (Stick.selectedStick.cluster) {
+        for (const stick of Stick.selectedStick.cluster) {
+          stick.deselect();
+        }
       }
+
       Stick.selectedStick = null;
       Stick.isSelected = false;
     }

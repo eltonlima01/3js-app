@@ -5,6 +5,7 @@ import { Stick } from "./Stick.js";
 import { Camera } from "./Camera.js";
 import { Interface } from "./Interface.js";
 import { RayCaster } from "./RayCaster.js";
+import { PhysicsEngine } from "./PhysicsEngine.js";
 
 window.addEventListener("contextmenu", (event) => event.preventDefault());
 
@@ -15,7 +16,7 @@ function main() {
   const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xeeeeee);
+  scene.background = new THREE.Color(0xdddddd);
 
   const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x333333, 2.0);
   const light = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -34,9 +35,7 @@ function main() {
 
   function changeGap(gap) {
     sticks.forEach((stick) => {
-      currentGap = gap;
-
-      stick.setGap(currentGap);
+      stick.setGap(gap);
     });
   }
 
@@ -45,10 +44,14 @@ function main() {
     deleteStick: deleteStick,
     separateStick: separateStick,
     changeGap: changeGap,
-    toggleCamera: toggleCamera
+    toggleCamera: toggleCamera,
+    analyzeBridge: analyzeBridge
   });
 
   const raycaster = new RayCaster(canvas, camera, sticks);
+  const physicsEngine = new PhysicsEngine(1.0);
+
+  let debugSpheres = [];
 
   loop();
 
@@ -70,16 +73,16 @@ function main() {
     camera.isPerspectiveMode = !camera.isPerspectiveMode;
 
     if (camera.isPerspectiveMode) {
-      scene.background = new THREE.Color(0x111111);
       graph.gridLines.visible = false;
     } else {
-      scene.background = new THREE.Color(0xdddddd);
       graph.gridLines.visible = true;
     }
   }
 
   function newStick(event) {
     const newStick = new Stick(currentGap);
+    newStick.cluster = new Set ([newStick]);
+
     scene.add(newStick.get());
 
     raycaster.startPlacing(newStick, event);
@@ -102,5 +105,44 @@ function main() {
 
     stick.cluster = new Set([stick]);
     raycaster.startPlacing(stick, event);
+  }
+
+  function analyzeBridge () {
+    if (sticks.length === 0) return;
+
+    let mainCluster = sticks[0].cluster;
+
+    sticks.forEach((stick) => {
+      if (stick.cluster.size > mainCluster.size) {
+        mainCluster = stick.cluster;
+      }
+    });
+
+    const data = physicsEngine.analyzeCluster(mainCluster);
+
+    if (data) {
+      debugSpheres.forEach(sphere => scene.remove(sphere));
+      debugSpheres = [];
+
+      data.nodes.forEach(node => {
+        const geometry = new THREE.SphereGeometry(0.3, 16, 16);
+
+        let color = 0x00ff00;
+
+        if (node.isSupport) {
+          color = node.supportType === "fixed" ? 0xff0000 : 0x0000ff;
+        }
+
+        const material = new THREE.MeshBasicMaterial({color: color, depthTest : false});
+
+        const sphere = new THREE.Mesh(geometry, material);
+
+        sphere.position.set(node.x, node.y, 0);
+        sphere.renderOrder = 999;
+
+        scene.add(sphere);
+        debugSpheres.push(sphere);
+      });
+    }
   }
 }

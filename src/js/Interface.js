@@ -8,6 +8,7 @@ export class Interface {
     this.updateGap = callbacks.updateGap;
     this.toggleCamera = callbacks.toggleCamera;
     this.changeGap = callbacks.changeGap;
+    this.analyzeBridge = callbacks.analyzeBridge;
 
     this.mainMenu = document.querySelector(".main-menu");
     this.mainMenuHeader = document.querySelector(".main-menu-header");
@@ -55,6 +56,14 @@ export class Interface {
 
     this.btnSeparate = document.getElementById("btn-separate");
     this.btnDelete = document.getElementById("btn-delete");
+
+    this.btnAnalyze = document.getElementById("analyze-btn");
+
+    this.btnAnalyze.addEventListener("pointerdown", (event) => {
+      event.stopPropagation()
+    });
+
+    this.btnAnalyze.addEventListener("click", this.analyzeBridge);
 
     this.events();
     this.mainInterface();
