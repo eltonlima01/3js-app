@@ -1,21 +1,20 @@
 import * as THREE from "three";
 
-const STICK_COLOR = 0xffff00;
-
-const STICK_HALF_WIDTH = 0.0965;
-const STICK_HALF_HEIGHT = 0.3915;
-const STICK_HALF_DEPTH = 6.0015;
-
 export class Stick {
   static selectedStick = null;
   static isSelected = false;
+
+  static DEFAULT_MASS = 1.5;
+
+  static DEFAULT_WIDTH = 0.193;
+  static DEFAULT_HEIGHT = 0.783;
+  static DEFAULT_DEPTH = 12.003;
+
+  static DEFAULT_COLOR = 0xffff00;
+
   static SNAP_THRESHOLD = 1.0;
 
-  static HALF_WIDTH = 0.0965;
-  static HALF_HEIGHT = 0.3915;
-  static HALF_DEPTH = 6.0015;
-
-  constructor(gap = 1.0) {
+  constructor(GAP = 1.0) {
     this.STICK_MASS = 1.5;
 
     this.group = new THREE.Group();
@@ -24,31 +23,31 @@ export class Stick {
     this.cluster = new Set([this]);
 
     const geometry = new THREE.BoxGeometry(
-      STICK_HALF_WIDTH,
-      STICK_HALF_HEIGHT,
-      STICK_HALF_DEPTH,
+      Stick.DEFAULT_WIDTH,
+      Stick.DEFAULT_HEIGHT,
+      Stick.DEFAULT_DEPTH,
     );
 
     this.material = new THREE.MeshStandardMaterial({
-      color: STICK_COLOR,
+      color: Stick.DEFAULT_COLOR,
       roughness: 0.75,
       metalness: 0.0,
     });
 
     const edgesGeometry = new THREE.EdgesGeometry(geometry);
-    const edgesMaterial = new THREE.LineBasicMaterial({color: 0x000000});
+    const edgesMaterial = new THREE.LineBasicMaterial({color: 0x222222});
 
     this.meshFront = new THREE.Mesh(geometry, this.material);
     this.meshFront.add(new THREE.LineSegments(edgesGeometry, edgesMaterial));
 
     this.meshFront.rotation.y = Math.PI / 2;
-    this.meshFront.position.z = -gap;
+    this.meshFront.position.z = -GAP;
 
     this.meshBack = new THREE.Mesh(geometry, this.material);
     this.meshBack.add(new THREE.LineSegments(edgesGeometry, edgesMaterial));
 
     this.meshBack.rotation.y = Math.PI / 2;
-    this.meshBack.position.z = gap;
+    this.meshBack.position.z = GAP;
 
     this.group.add(this.meshFront);
     this.group.add(this.meshBack);
@@ -79,7 +78,7 @@ export class Stick {
   }
 
   getEndPoints() {
-    const halfDepth = STICK_HALF_DEPTH / 2.0;
+    const halfDepth = Stick.DEFAULT_DEPTH / 2.0;
 
     const left = new THREE.Vector3(-halfDepth, 0, 0);
     const right = new THREE.Vector3(halfDepth, 0, 0);
@@ -128,7 +127,7 @@ export class Stick {
   }
 
   resetColor () {
-    this.material.color.setHex (0xffff00);
+    this.material.color.setHex (Stick.DEFAULT_COLOR);
     this.material.needsUpdate = true;
   }
 }

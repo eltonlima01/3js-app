@@ -30,6 +30,7 @@ export class RayCaster {
 
     if (event && event.clientX) {
       this.updateMousePos(event);
+      
       this.raycaster.setFromCamera(this.mouse, this.camera.get());
       this.raycaster.ray.intersectPlane(this.basePlane, this.placingStick.get().position);
     }
@@ -136,52 +137,50 @@ export class RayCaster {
       this.raycaster.setFromCamera(this.mouse, this.camera.get());
       this.raycaster.ray.intersectPlane(this.basePlane, this.placingStick.get().position);
 
-    Stick.SNAP_THRESHOLD = 1.0;
-    let snapped = false;
+      let snapped = false;
 
-    const movingEnds = this.placingStick.getEndPoints();
+      const movingEnds = this.placingStick.getEndPoints();
 
-    for (const stick of this.sticks) {
-      if(stick.cluster == this.placingStick.cluster) { continue }
+      for (const stick of this.sticks) {
+        if(stick.cluster == this.placingStick.cluster) { continue }
 
-      const targetEnds = stick.getEndPoints();
+        const targetEnds = stick.getEndPoints();
 
-      for(const mEnds of movingEnds) {
-        for(const tEnds of targetEnds) {
-          const distance = mEnds.distanceTo(tEnds);
+        for(const mEnds of movingEnds) {
+          for(const tEnds of targetEnds) {
+            const distance = mEnds.distanceTo(tEnds);
 
-          if(distance < Stick.SNAP_THRESHOLD) {
-            const snapOffset = new THREE.Vector3().subVectors(tEnds, mEnds);
+            if(distance < Stick.SNAP_THRESHOLD) {
+              const snapOffset = new THREE.Vector3().subVectors(tEnds, mEnds);
 
-            for (const clusterStick of this.placingStick.cluster) {
-              clusterStick.get().position.add(snapOffset);
-              clusterStick.get().updateMatrixWorld(true);
+              for (const clusterStick of this.placingStick.cluster) {
+                clusterStick.get().position.add(snapOffset);
+                clusterStick.get().updateMatrixWorld(true);
+              }
+
+              this.offset.sub(snapOffset);
+
+              for(const s of this.placingStick.cluster) {
+                stick.cluster.add(s);
+                s.cluster = stick.cluster;
+              }
+
+              snapped = true;
+
+              for (const clusterStick of this.placingStick.cluster) { clusterStick.deselect() }
+
+              this.placingStick = null;
+              Stick.isSelected = false;
+              
+              break;
             }
-
-            this.offset.sub(snapOffset);
-
-            for(const s of this.placingStick.cluster) {
-              stick.cluster.add(s);
-              s.cluster = stick.cluster;
-            }
-
-            snapped = true;
-
-            for (const clusterStick of this.placingStick.cluster) {
-              clusterStick.deselect();
-            }
-
-            this.placingStick = null;
-            Stick.isSelected = false;
-            break;
           }
+
+          if (snapped === true) { break }
         }
 
         if (snapped === true) { break }
       }
-
-      if (snapped === true) { break }
-    }
 
       return;
     }
@@ -193,11 +192,9 @@ export class RayCaster {
     this.raycaster.setFromCamera(this.mouse, this.camera.get());
 
     const intersectPoint = new THREE.Vector3();
-    const hit = this.raycaster.ray.intersectPlane(this.dragPlane, intersectPoint);
 
-    if (!hit) {
-      return;
-    }
+    const hit = this.raycaster.ray.intersectPlane(this.dragPlane, intersectPoint);
+    if (!hit) { return }
 
     this.raycaster.ray.intersectPlane(this.dragPlane, intersectPoint);
 
@@ -211,7 +208,6 @@ export class RayCaster {
       stick.get().updateMatrixWorld(true);
     }
 
-    Stick.SNAP_THRESHOLD = 1.0;
     let snapped = false;
 
     const movingEnds = Stick.selectedStick.getEndPoints();
@@ -260,7 +256,7 @@ export class RayCaster {
   }
 
   onPointerUp(event) {
-    if (event.button === 0 && Stick.selectedStick && Stick.isSelected) {
+    if ((event.button === 0) && Stick.selectedStick && Stick.isSelected) {
       if (Stick.selectedStick.cluster) {
         for (const stick of Stick.selectedStick.cluster) {
           stick.deselect();
