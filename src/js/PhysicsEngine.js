@@ -1,8 +1,9 @@
+import { Stick } from "./Stick";
+
 const G = 9.81;
 
 export class PhysicsEngine {
-    constructor(snapThreshold = 1.0) {
-        this.snapThreshold = snapThreshold;
+    constructor() {
         this.EA = 10000.0;
     }
 
@@ -31,7 +32,7 @@ export class PhysicsEngine {
             const barNodes = [];
 
             for (const end of ends) {
-                let foundNode = nodes.find((n) => Math.hypot(n.x - end.x, n.y - end.y) < this.snapThreshold);
+                let foundNode = nodes.find((n) => Math.hypot(n.x - end.x, n.y - end.y) < Stick.SNAP_THRESHOLD);
 
                 if (!foundNode) {
                     foundNode = {
@@ -96,7 +97,7 @@ export class PhysicsEngine {
 
     applySelfWeight(nodes, bars) {
         for (const bar of bars) {
-            const halfWeight = bar.stick.get().scale.x * bar.stick.STICK_MASS * G / 2000.0;
+            const halfWeight = bar.stick.get().scale.x * Stick.DEFAULT_MASS * G / 2000.0;
 
             bar.nodeA.fy -= halfWeight;
             bar.nodeB.fy -= halfWeight;

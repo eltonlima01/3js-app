@@ -1,8 +1,8 @@
 import * as THREE from "three";
 
 export class Stick {
+  static selected = false;
   static selectedStick = null;
-  static isSelected = false;
 
   static DEFAULT_MASS = 1.5;
 
@@ -12,21 +12,22 @@ export class Stick {
 
   static DEFAULT_COLOR = 0xffff00;
 
+  static geometry = new THREE.BoxGeometry (
+    Stick.DEFAULT_WIDTH,
+    Stick.DEFAULT_HEIGHT,
+    Stick.DEFAULT_DEPTH
+  );
+
+    static edgesGeometry = new THREE.EdgesGeometry(Stick.geometry);
+    static edgesMaterial = new THREE.LineBasicMaterial({color: 0x222222});
+
   static SNAP_THRESHOLD = 1.0;
 
   constructor(GAP = 1.0) {
-    this.STICK_MASS = 1.5;
-
     this.group = new THREE.Group();
     this.group.userData.instance = this;
 
     this.cluster = new Set([this]);
-
-    const geometry = new THREE.BoxGeometry(
-      Stick.DEFAULT_WIDTH,
-      Stick.DEFAULT_HEIGHT,
-      Stick.DEFAULT_DEPTH,
-    );
 
     this.material = new THREE.MeshStandardMaterial({
       color: Stick.DEFAULT_COLOR,
@@ -34,18 +35,21 @@ export class Stick {
       metalness: 0.0,
     });
 
-    const edgesGeometry = new THREE.EdgesGeometry(geometry);
-    const edgesMaterial = new THREE.LineBasicMaterial({color: 0x222222});
+    const edgesFront = new THREE.LineSegments(Stick.edgesGeometry, Stick.edgesMaterial);
+    edgesFront.raycast = () => {};
 
-    this.meshFront = new THREE.Mesh(geometry, this.material);
-    this.meshFront.add(new THREE.LineSegments(edgesGeometry, edgesMaterial));
+    this.meshFront = new THREE.Mesh(Stick.geometry, this.material);
 
+    this.meshFront.add(edgesFront);
     this.meshFront.rotation.y = Math.PI / 2;
     this.meshFront.position.z = -GAP;
 
-    this.meshBack = new THREE.Mesh(geometry, this.material);
-    this.meshBack.add(new THREE.LineSegments(edgesGeometry, edgesMaterial));
+    const edgesBack = new THREE.LineSegments(Stick.edgesGeometry, Stick.edgesMaterial);
+    edgesBack.raycast = () => {};
 
+    this.meshBack = new THREE.Mesh(Stick.geometry, this.material);
+
+    this.meshBack.add(edgesBack);
     this.meshBack.rotation.y = Math.PI / 2;
     this.meshBack.position.z = GAP;
 
