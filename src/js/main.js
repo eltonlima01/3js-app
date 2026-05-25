@@ -112,10 +112,13 @@ function main() {
 
     let mainCluster = sticks[0].cluster;
 
-    sticks.forEach((stick) => {
-      if (stick.cluster.size > mainCluster.size) {
-        mainCluster = stick.cluster;
-      }
+    sticks.forEach ((stick) => {
+      stick.resetColor ();
+
+      if (stick.resetState) { stick.resetState () }
+      if (stick.saveOriginalState) { stick.saveOriginalState () }
+
+      if (stick.cluster.size > mainCluster.size) { mainCluster = stick.cluster }
     });
 
     const data = physicsEngine.analyzeCluster(mainCluster);
@@ -124,25 +127,48 @@ function main() {
       debugSpheres.forEach(sphere => scene.remove(sphere));
       debugSpheres = [];
 
+      const DEFORMATION_SCALE = 30000.0;
+
       data.nodes.forEach(node => {
         const geometry = new THREE.SphereGeometry(0.3, 16, 16);
 
         let color = 0x00ff00;
 
-        if (node.isSupport) {
-          color = node.supportType === "fixed" ? 0xff0000 : 0x0000ff;
-        }
+        if (node.isSupport) { color = node.supportType === "fixed" ? 0xff0000 : 0x0000ff }
 
         const material = new THREE.MeshBasicMaterial({color: color, depthTest : false});
-
         const sphere = new THREE.Mesh(geometry, material);
 
-        sphere.position.set(node.x, node.y, 0);
+        const newX = node.x + (node.dispX * DEFORMATION_SCALE);
+        const newY = node.y + (node.dispY * DEFORMATION_SCALE);
+
+        sphere.position.set(newX, newY, 0);
         sphere.renderOrder = 999;
 
         scene.add(sphere);
         debugSpheres.push(sphere);
       });
+
+      if (data.elements) {
+        data.elements.forEach (element => {
+          element.stick.setStressColor (element.force);
+
+          const newAx = element.nodeA.x + (element.nodeA.dispX * DEFORMATION_SCALE);
+          const newAy = element.nodeA.y + (element.nodeA.dispY * DEFORMATION_SCALE);
+
+          const newBx = element.nodeB.x + (element.nodeB.dispX * DEFORMATION_SCALE);
+          const newBy = element.nodeB.y + (element.nodeB.dispY * DEFORMATION_SCALE);
+
+          const dx = newBx - newAx;
+          const dy = newBy - newAy;
+
+          const midX = (newAx + newBx) / 2.0;
+          const midY = (newAy + newBy) / 2.0;
+
+          element.stick.group.position.set (midX, midY, element.stick.group.position.z);
+          element.stick.group.rotation.z = Math.atan2 (dy, dx);
+          element.stick.group.scale.x = Math.hypot (dx, dy) / Stick.HALF_DEPTH;
+      });
     }
   }
-}
+}}

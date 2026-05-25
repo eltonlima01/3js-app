@@ -128,15 +128,60 @@ export class RayCaster {
   }
 
   onPointerMove(event) {
-    if (this.camera.isPerspectiveMode) {
-      return;
-    }
+    if (this.camera.isPerspectiveMode) { return }
 
     if (this.placingStick) {
       this.updateMousePos(event);
 
       this.raycaster.setFromCamera(this.mouse, this.camera.get());
       this.raycaster.ray.intersectPlane(this.basePlane, this.placingStick.get().position);
+
+    Stick.SNAP_THRESHOLD = 1.0;
+    let snapped = false;
+
+    const movingEnds = this.placingStick.getEndPoints();
+
+    for (const stick of this.sticks) {
+      if(stick.cluster == this.placingStick.cluster) { continue }
+
+      const targetEnds = stick.getEndPoints();
+
+      for(const mEnds of movingEnds) {
+        for(const tEnds of targetEnds) {
+          const distance = mEnds.distanceTo(tEnds);
+
+          if(distance < Stick.SNAP_THRESHOLD) {
+            const snapOffset = new THREE.Vector3().subVectors(tEnds, mEnds);
+
+            for (const clusterStick of this.placingStick.cluster) {
+              clusterStick.get().position.add(snapOffset);
+              clusterStick.get().updateMatrixWorld(true);
+            }
+
+            this.offset.sub(snapOffset);
+
+            for(const s of this.placingStick.cluster) {
+              stick.cluster.add(s);
+              s.cluster = stick.cluster;
+            }
+
+            snapped = true;
+
+            for (const clusterStick of this.placingStick.cluster) {
+              clusterStick.deselect();
+            }
+
+            this.placingStick = null;
+            Stick.isSelected = false;
+            break;
+          }
+        }
+
+        if (snapped === true) { break }
+      }
+
+      if (snapped === true) { break }
+    }
 
       return;
     }
@@ -166,7 +211,7 @@ export class RayCaster {
       stick.get().updateMatrixWorld(true);
     }
 
-    const SNAP_THRESHOLD = 1.0;
+    Stick.SNAP_THRESHOLD = 1.0;
     let snapped = false;
 
     const movingEnds = Stick.selectedStick.getEndPoints();
@@ -180,7 +225,7 @@ export class RayCaster {
         for(const tEnds of targetEnds) {
           const distance = mEnds.distanceTo(tEnds);
 
-          if(distance < SNAP_THRESHOLD) {
+          if(distance < Stick.SNAP_THRESHOLD) {
             const snapOffset = new THREE.Vector3().subVectors(tEnds, mEnds);
 
             for (const clusterStick of Stick.selectedStick.cluster) {

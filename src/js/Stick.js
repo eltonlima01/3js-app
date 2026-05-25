@@ -9,6 +9,11 @@ const STICK_HALF_DEPTH = 6.0015;
 export class Stick {
   static selectedStick = null;
   static isSelected = false;
+  static SNAP_THRESHOLD = 1.0;
+
+  static HALF_WIDTH = 0.0965;
+  static HALF_HEIGHT = 0.3915;
+  static HALF_DEPTH = 6.0015;
 
   constructor(gap = 1.0) {
     this.STICK_MASS = 1.5;
@@ -34,19 +39,13 @@ export class Stick {
     const edgesMaterial = new THREE.LineBasicMaterial({color: 0x000000});
 
     this.meshFront = new THREE.Mesh(geometry, this.material);
-
-    const linesFront = new THREE.LineSegments(edgesGeometry, edgesMaterial);
-
-    this.meshFront.add(linesFront);
+    this.meshFront.add(new THREE.LineSegments(edgesGeometry, edgesMaterial));
 
     this.meshFront.rotation.y = Math.PI / 2;
     this.meshFront.position.z = -gap;
 
     this.meshBack = new THREE.Mesh(geometry, this.material);
-
-    const linesBack = new THREE.LineSegments(edgesGeometry, edgesMaterial);
-
-    this.meshBack.add(linesBack);
+    this.meshBack.add(new THREE.LineSegments(edgesGeometry, edgesMaterial));
 
     this.meshBack.rotation.y = Math.PI / 2;
     this.meshBack.position.z = gap;
@@ -55,17 +54,10 @@ export class Stick {
     this.group.add(this.meshBack);
   }
 
-  get() {
-    return this.group;
-  }
+  get() { return this.group }
 
-  getAngle() {
-    return this.group.rotation.z * (180.0 / Math.PI);
-  }
-
-  setAngle(degrees) {
-    this.group.rotation.z = degrees * (Math.PI / 180.0);
-  }
+  getAngle() { return this.group.rotation.z * (180.0 / Math.PI) }
+  setAngle(degrees) { this.group.rotation.z = degrees * (Math.PI / 180.0) }
 
   setGap(gap) {
     this.meshFront.position.z = -gap;
@@ -96,5 +88,47 @@ export class Stick {
     this.group.localToWorld(right);
 
     return [ left, right ];
+  }
+
+  setStressColor (force) {
+    if (force === null) {
+      this.material.color.setHex (0x222222);
+      this.material.needsUpdate = true;
+
+      return;
+    }
+
+    if (Math.abs (force) < 0.0001) { this.material.color.setHex (0x777777) }
+    else if (force > 0.0) { this.material.color.setHex (0x0000ff) }
+    else { this.material.color.setHex (0xff0000) }
+
+    this.material.transparent = false;
+    this.material.opacity = 1.0;
+    this.material.needsUpdate = true;
+  }
+
+  saveOriginalState () {
+    if (!this.originalState) {
+      this.originalState = {
+        x: this.group.position.x,
+        y: this.group.position.y,
+        z: this.group.position.z,
+        angle: this.group.rotation.z,
+        scale: this.group.scale.x
+      }
+    }
+  }
+
+  resetState() {
+    if (this.originalState) {
+      this.group.position.set(this.originalState.x, this.originalState.y, this.originalState.z);
+      this.group.rotation.z = this.originalState.angle;
+      this.group.scale.x = this.originalState.scale;
+    }
+  }
+
+  resetColor () {
+    this.material.color.setHex (0xffff00);
+    this.material.needsUpdate = true;
   }
 }
