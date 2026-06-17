@@ -211,8 +211,8 @@ export class PhysicsEngine {
             const c = dx / barLength;
             const s = dy / barLength;
 
-            bar.force = (this.EA / barLength) * ((c * (U[bar.nodeB.id * 2] - U[bar.nodeA.id * 2]))
-            + s * (U[(bar.nodeB.id * 2) + 1] - U[(bar.nodeA.id * 2) + 1]));
+            bar.force = ((this.EA / barLength) * ((c * (U[bar.nodeB.id * 2] - U[bar.nodeA.id * 2]))
+            + s * (U[(bar.nodeB.id * 2) + 1] - U[(bar.nodeA.id * 2) + 1]))) / 2.0;
         }
     }
 
