@@ -4,7 +4,7 @@ const G = 9.81;
 
 export class PhysicsEngine {
     constructor() {
-        this.EA = 10000.0;
+        this.EA = 10000.0 * 2.0;
     }
 
     analyzeCluster(cluster) {
@@ -97,7 +97,7 @@ export class PhysicsEngine {
 
     applySelfWeight(nodes, bars) {
         for (const bar of bars) {
-            const halfWeight = bar.stick.get().scale.x * Stick.DEFAULT_MASS * G / 2000.0;
+            const halfWeight = bar.stick.get().scale.x * Stick.DEFAULT_MASS * G / 1000.0;
 
             bar.nodeA.fy -= halfWeight;
             bar.nodeB.fy -= halfWeight;
