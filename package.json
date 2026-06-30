@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "ml-matrix": "^6.12.2",
     "three": "^0.183.2"
   },
   "devDependencies": {

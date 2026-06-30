@@ -23,7 +23,7 @@ export class Stick {
 
   static SNAP_THRESHOLD = 1.0;
 
-  constructor(GAP = 1.0) {
+  constructor() {
     this.group = new THREE.Group();
     this.group.userData.instance = this;
 
@@ -42,7 +42,7 @@ export class Stick {
 
     this.meshFront.add(edgesFront);
     this.meshFront.rotation.y = Math.PI / 2;
-    this.meshFront.position.z = -GAP;
+    this.meshFront.position.z = -Stick.DEFAULT_DEPTH / 2.0;
 
     const edgesBack = new THREE.LineSegments(Stick.edgesGeometry, Stick.edgesMaterial);
     edgesBack.raycast = () => {};
@@ -51,7 +51,7 @@ export class Stick {
 
     this.meshBack.add(edgesBack);
     this.meshBack.rotation.y = Math.PI / 2;
-    this.meshBack.position.z = GAP;
+    this.meshBack.position.z = Stick.DEFAULT_DEPTH / 2.0;
 
     this.group.add(this.meshFront);
     this.group.add(this.meshBack);

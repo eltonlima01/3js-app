@@ -1,4 +1,5 @@
 import { Stick } from "./Stick";
+import { Matrix, solve } from "ml-matrix";
 
 const G = 9.81;
 
@@ -14,8 +15,6 @@ export class PhysicsEngine {
 
         this.identifySupports(nodes);
         this.applySelfWeight(nodes, bars);
-
-        this.calculateGlobalReactions(nodes);
         this.calculateInternalForces(nodes, bars);
 
         return { nodes, elements: bars };
@@ -104,37 +103,6 @@ export class PhysicsEngine {
         }
     }
 
-    calculateGlobalReactions(nodes) {
-        const supportA = nodes.find(n => n.supportType === "fixed");
-        const supportB = nodes.find(n => n.supportType === "roller");
-
-        if (!supportA || !supportB) { return }
-
-        const distAB = supportB.x - supportA.x;
-
-        let momentsA = 0;
-        let totalYForce = 0;
-
-        for (const node of nodes) {
-            if (node.fy < 0.0) {
-                const forceY = node.fy;
-
-                momentsA += forceY * (node.x - supportA.x);
-                totalYForce += forceY;
-            }
-        }
-
-        const reactionBy = -momentsA / distAB;
-        supportB.fy += reactionBy;
-
-        const reactionAy = -totalYForce - reactionBy;
-        supportA.fy += reactionAy;
-
-        console.log("[REAÇÕES GLOBAIS")
-        console.log(`Apoio (1º gênero) = ${reactionAy.toFixed(4)} N`)
-        console.log(`Apoio (2º gênero) = ${reactionBy.toFixed(4)} N`)
-    }
-
     calculateInternalForces(nodes, bars) {
         const dim = nodes.length * 2;
 
@@ -192,8 +160,10 @@ export class PhysicsEngine {
             }
         }
 
-        const U = this._gaussianElimination (K, F);
-        if (!U) { return }
+        let U;
+
+        try { U = (solve(new Matrix (K), Matrix.columnVector(Array.from (F)))).to1DArray() }
+        catch(error) { return }
 
         for (const node of nodes) {
             const nodeId2 = node.id * 2;
@@ -213,6 +183,8 @@ export class PhysicsEngine {
 
             bar.force = ((this.EA / barLength) * ((c * (U[bar.nodeB.id * 2] - U[bar.nodeA.id * 2]))
             + s * (U[(bar.nodeB.id * 2) + 1] - U[(bar.nodeA.id * 2) + 1]))) / 2.0;
+
+            bar.stick.force = bar.force;
         }
     }
 
@@ -221,53 +193,5 @@ export class PhysicsEngine {
 
         K[idx][idx] = 1.0;
         F[idx] = 0.0;
-    }
-
-    _gaussianElimination (A, b) {
-        const bLength = b.length;
-
-        for (let i = 0; i < bLength; ++i) {
-            let maxEl = Math.abs (A[i][i]);
-            let maxRow = i;
-
-            for (let j = i + 1; j < bLength; ++j) {
-                if (Math.abs (A[j][i]) > maxEl) {
-                    maxEl = Math.abs (A[j][i]);
-                    maxRow = j;
-                }
-            }
-
-            if (maxEl < 0.0001) { return null }
-
-            let tmprr = A[maxRow];
-
-            A[maxRow] = A[i];
-            A[i] = tmprr;
-
-            tmprr = b[maxRow];
-
-            b[maxRow] = b[i];
-            b[i] = tmprr;
-
-            for (let j = i + 1; j < bLength; ++j) {
-                const c = -A[j][i] / A[i][i];
-
-                A[j][i] = 0.0;
-
-                for (let k = i + 1; k < bLength; ++k) { A[j][k] += c * A[i][k] }
-
-                b[j] += c * b[i];
-            }
-        }
-
-        const x = new Float64Array (bLength);
-
-        for (let i = bLength - 1; i >= 0; --i) {
-            x[i] = b[i] / A[i][i];
-            
-            for (let j = i - 1; j >= 0; --j) { b[j] -= A[j][i] * x[i] }
-        }
-
-        return x;
     }
 }

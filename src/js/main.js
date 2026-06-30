@@ -36,7 +36,6 @@ function main() {
     newStick: newStick,
     deleteStick: deleteStick,
     separateStick: separateStick,
-    changeGap: changeGap,
     toggleCamera: toggleCamera,
     analyzeBridge: analyzeBridge
   });
@@ -55,12 +54,6 @@ function main() {
     requestAnimationFrame(loop);
 
     renderer.render(scene, camera.get());
-  }
-
-  function changeGap(gap) {
-    sticks.forEach((stick) => {
-      stick.setGap(gap);
-    });
   }
 
   function toggleCamera() {

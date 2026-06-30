@@ -5,9 +5,7 @@ export class Interface {
     this.newStick = callbacks.newStick;
     this.deleteStick = callbacks.deleteStick;
     this.separateStick = callbacks.separateStick;
-    this.updateGap = callbacks.updateGap;
     this.toggleCamera = callbacks.toggleCamera;
-    this.changeGap = callbacks.changeGap;
     this.analyzeBridge = callbacks.analyzeBridge;
 
     this.mainMenu = document.querySelector(".main-menu");
@@ -26,8 +24,7 @@ export class Interface {
     this.lengthDisplay = document.getElementById("length-display");
     this.lengthNumber = document.getElementById("length-number");
 
-    this.posXNumber = document.getElementById("pos-x");
-    this.posYNumber = document.getElementById("pos-y");
+    this.forceDisplay = document.getElementById("force-display");
 
     this.btnStick.addEventListener("pointerdown", (event) =>
       event.stopPropagation(),
@@ -38,21 +35,6 @@ export class Interface {
 
     this.btnStick.addEventListener("click", this.newStick);
     this.btnCamera.addEventListener("click", this.toggleCamera);
-
-    this.gapInput = document.getElementById("gap-input");
-    this.gapInput.value = 1.0;
-
-    this.gapInput.addEventListener("pointerdown", (event) => {
-      event.stopPropagation();
-    });
-
-    this.gapInput.addEventListener("input", (event) => {
-      const newGap = parseFloat(event.target.value);
-
-      if (!isNaN(newGap)) {
-        this.changeGap(newGap);
-      }
-    });
 
     this.btnSeparate = document.getElementById("btn-separate");
     this.btnDelete = document.getElementById("btn-delete");
@@ -77,20 +59,9 @@ export class Interface {
     this.btnCamera.addEventListener("pointerdown", (event) =>
       event.stopPropagation(),
     );
-    this.gapInput.addEventListener("pointerdown", (event) =>
-      event.stopPropagation(),
-    );
 
     this.btnStick.addEventListener("click", this.newStick);
     this.btnCamera.addEventListener("click", this.toggleCamera);
-
-    this.gapInput.addEventListener("input", (event) => {
-      const UPDATED_GAP = parseFloat(event.target.value);
-
-      if (!isNaN(UPDATED_GAP)) {
-        this.updateGap(UPDATED_GAP);
-      }
-    });
 
     this.mainMenuHeader.addEventListener("pointerdown", (event) => {
       event.stopPropagation();
@@ -176,28 +147,6 @@ export class Interface {
         }
       }
     });
-
-    /* Position X/Y */
-
-    function updatePosition(axis, value) {
-      if(Stick.selectedStick !== null && (isNaN(value) === false)) {
-        const currentPos = Stick.selectedStick.get().position[axis];
-        const delta = value - currentPos;
-
-        for(const stick of Stick.selectedStick.cluster) {
-          stick.get().position[axis] += delta;
-          stick.get().updateMatrixWorld(true);
-        }
-      }
-    }
-
-    this.posXNumber.addEventListener("input", (event) => {
-      updatePosition('x', parseFloat(event.target.value));
-    });
-
-    this.posYNumber.addEventListener("input", (event) => {
-      updatePosition('y', parseFloat(event.target.value));
-    });
   }
 
   events() {
@@ -220,12 +169,29 @@ export class Interface {
       this.lengthNumber.value = length;
       this.lengthDisplay.innerText = (6.0015 * 2 * length).toFixed(1) + " cm";
 
-      this.posXNumber.value = (Stick.selectedStick.get().position.x).toFixed(3);
-      this.posYNumber.value = (Stick.selectedStick.get().position.y).toFixed(3);
+      if (Stick.selectedStick.force) {
+        let forceType = "";
+
+        if (Stick.selectedStick.force > 0.001) {
+          forceType = "Tração";
+          this.forceDisplay.style.color = "blue";
+        }
+        else if (Stick.selectedStick.force < -0.001) {
+          forceType = "Compressão";
+          this.forceDisplay.style.color = "red";
+        }
+        else { this.forceDisplay.style.color = "inherit" }
+
+        this.forceDisplay.innerText = `${Math.abs(Stick.selectedStick.force).toFixed(3)} N ${forceType}`;
+      }
+      else {
+        this.forceDisplay.innerText = "Não calculado";
+        this.forceDisplay.style.color = "inherit";
+      }
     });
 
     window.addEventListener("pointerdown", (event) => {
-      if (event.button === 0) {
+      if (!event.button) {
         this.contextMenu.classList.remove("active");
         Stick.selectedStick = null;
       }

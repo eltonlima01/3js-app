@@ -31,24 +31,32 @@
   </head>
 
   <body>
-    <!-- canvas -->
-
     <canvas id="canvas"></canvas>
 
-    <!-- main-menu -->
+    <!-- --------- -->
+    <!-- main menu -->
+    <!-- --------- -->
 
     <div class="main-menu">
+
+      <!-- header -->
+
       <div class="main-menu-header">
         <img src="/assets/arrow-up-svgrepo-com.svg">
       </div>
 
       <div class="main-menu-body">
+
+        <!-- camera switch -->
+
         <div class="main-menu-body-element">
           <button class="main-menu-body-element-btn" id="camera-btn">
             <img src="/assets/camera-outlined-svgrepo-com.svg">
             Alternar visualização (2D/3D)
           </button>
         </div>
+
+        <!-- add stick -->
 
         <div class="main-menu-body-element">
           <button class="main-menu-body-element-btn" id="stick-btn">
@@ -57,29 +65,20 @@
           </button>
         </div>
 
+        <!-- weight analysis -->
+
         <div class="main-menu-body-element">
           <button class="main-menu-body-element-btn" id="analyze-btn">
             <img src="/assets/weight-hanging-svgrepo-com.svg">
             Analisar cargas
           </button>
         </div>
-
-        <div class="main-menu-body-element">
-          <label class="main-menu-body-element-label">
-            Distância entre camadas (cm):
-          </label>
-          <img src="/assets/format-line-spacing-svgrepo-com.svg">
-          <input
-            class="main-menu-body-element-number"
-            id="gap-input"
-            type="number"
-        >
-        </div>
-
       </div>
     </div>
 
-    <!-- context-menu -->
+    <!-- ------------ -->
+    <!-- context menu -->
+    <!-- ------------ -->
 
     <div class="context-menu" id="context-menu">
 
@@ -87,9 +86,10 @@
 
       <div class="context-menu-header"></div>
 
-      <!-- body -->
-
       <div class="context-menu-body">
+
+        <!-- stick angle -->
+
         <div class="context-menu-body-element">
           <label class="context-menu-body-element-label icon-angle"
             >Ângulo: <span id="angle-display">0°</span></label
@@ -111,6 +111,8 @@
             value="0"
         >
         </div>
+
+        <!-- stick scale -->
 
         <div class="context-menu-body-element">
           <label class="context-menu-body-element-label icon-length"
@@ -134,19 +136,24 @@
         >
         </div>
 
+        <!-- separate stick -->
+
         <div class="context-menu-body-element">
           <button class="context-menu-body-element-btn" id="btn-separate">Separar palito</button>
         </div>
+
+        <!-- delete stick -->
+
         <div class="context-menu-body-element">
           <button class="context-menu-body-element-btn" id="btn-delete">Excluir palito</button>
         </div>
 
-        <div class="context-menu-body-element">
-          <label class="context-menu-body-element-label icon-coord">Posição X</label>
-          <input class="context-menu-body-element-number" id="pos-x" type="number">
+        <!-- stick internal force -->
 
-          <label class="context-menu-body-element-label icon-coord">Posição Y</label>
-          <input class="context-menu-body-element-number" id="pos-y" type="number">
+        <div class="context-menu-body-element">
+          <label class="context-menu-body-element-label">
+            Esforço Interno: <span id="force-display">Não calculado</span>
+          </label>
         </div>
       </div>
     </div>
