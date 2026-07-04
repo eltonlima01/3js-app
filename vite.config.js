@@ -1,5 +1,5 @@
 export default {
-    base: '/3js-app',
+    base: '/tcc',
     build: {
         outDir: 'dist',
         emptyOutDir: true
